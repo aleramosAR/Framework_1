@@ -1,0 +1,157 @@
+@layout('main')
+
+@section('content')
+
+
+
+
+
+<div class='row'>
+	<div class='col-md-4'>
+		<form action="/productos" method="POST">
+      {{ csrfField() }}
+			<fieldset class='card'>
+				<div class='card-header bg-primary text-light'>Ingresa un nuevo producto</div>
+				<div class='card-body'>
+					<div class='mb-3'>
+						<label for='title' class='form-label'>Titulo</label>
+						<input type='text' name='title' id='title' class='form-control' value="{{ old('title', '')}}" />
+            {{ elIf('<span class="error">El campo "título" está vacío.</span>', getErrorFor('title'), hasErrorFor('title')) }}
+					</div>
+					<div class='mb-3'>
+						<label for='price' class='form-label'>Precio</label>
+						<input type='number' name='price' id='price' class='form-control' value="{{ old('price', '')}}" />
+            {{ elIf('<span class="error">El campo "precio" está vacío.</span>', getErrorFor('price'), hasErrorFor('price')) }}
+					</div>
+					<div class='mb-3'>
+						<label for='thumbnail' class='form-label'>Nombre de la imagen</label>
+						<input type='text' name='thumbnail' id='thumbnail' class='form-control' value="{{ old('thumbnail', '')}}" />
+            {{ elIf('<span class="error">El campo "thumbnail" está vacío.</span>', getErrorFor('thumbnail'), hasErrorFor('thumbnail')) }}
+						<small class='text-black-50'>Ingresar n&deg; desde el 01 al 16 (01,
+							02, 03, etc.)</small>
+					</div>
+					<button class='btn btn-primary float-right mt-3'>Agregar producto</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<div class='col-md-4'>
+		<div class='card-header bg-success text-light'>Actualizar producto</div>
+		<div class='mx-auto'>
+			<form action="{{ '/productos/update' }}" method="POST">
+        {{ csrfField() }}
+				<fieldset class='card'>
+					<div class='card-body'>
+						<div class='mb-3'>
+							<label for='id' class='form-label'>ID</label>
+							<input type='text' name='idUP' id='idUP' class='form-control' value="{{ old('idUP', '')}}" />
+              {{ elIf('<span class="error">El campo "ID" está vacío.</span>', getErrorFor('idUP'), hasErrorFor('idUP')) }}
+						</div>
+						<div class='mb-3'>
+							<label for='titleUP' class='form-label'>Titulo</label>
+							<input type='text' name='titleUP' id='titleUP' class='form-control' />
+              {{ elIf('<span class="error">El campo "título" está vacío.</span>', getErrorFor('titleUP'), hasErrorFor('titleUP')) }}
+						</div>
+						<div class='mb-3'>
+							<label for='price' class='form-label'>Precio</label>
+							<input type='number' name='priceUP' id='priceUP' class='form-control' />
+						</div>
+						<div class='mb-3'>
+							<label for='thumbnailUP' class='form-label'>Nombre de la imagen</label>
+							<input type='text' name='thumbnailUP' id='thumbnailUP' class='form-control' />
+							<small class='text-black-50'>N&deg; desde 01 a 16</small>
+						</div>
+						<button class='btn btn-success float-right mt-3'>Actualizar producto</button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+	<div class='col-md-4'>
+		<div class='card-header bg-danger text-light'>Eliminar producto</div>
+		<div class='mx-auto'>
+			<form action="{{ '/productos/delete' }}" method="POST">
+        {{ csrfField() }}
+				<fieldset class='card'>
+					<div class='card-body'>
+						<div class='mb-3'>
+							<label for='id' class='form-label'>ID</label>
+							<input type='text' name='id' id='id' class='form-control' value="{{ old('id', '')}}" />
+              {{ elIf('<span class="error">El campo ID está vacío.</span>', getErrorFor('id'), hasErrorFor('id')) }}
+						</div>
+						<button class='btn btn-danger float-right'>Eliminar producto</button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+<hr class="mt-5 mb-5" />
+<h3 class="mb-5">Listado de productos</h3>
+<div id="productos">
+  @if(productos.length)
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Title</th>
+        <th scope="col">Price</th>
+        <th scope="col">Image</th>
+      </tr>
+    </thead>
+    <tbody>
+      @each(producto in productos)
+      <tr>
+        <th scope="row">{{producto.id}}</th>
+        <td>{{producto.title}}</td>
+        <td>{{producto.price}}</td>
+        <td><img src="https://cdn1.iconfinder.com/data/icons/fruit-39/128/FRUIT_2-{{producto.thumbnail}}-128.png" /></td>
+      </tr>
+      @endeach
+    </tbody>
+  </table>
+  @else
+  <div class="alert alert-danger mb-5">
+    <strong>No hay productos aun! Carga nuevos productos.</strong>
+  </div>
+  @endif
+</div>
+<hr class="mt-5 mb-5" />
+<h3 class="mb-3">Centro de mensajes</h3>
+<form action="/mensajes" method="POST">
+  {{ csrfField() }}
+  <div class="form-row mb-2">
+    <div class="col-6">
+      <label>Nombre</label>
+      <input type="text" name="username" id="username" class="form-control" placeholder="Tu Nombre" value="{{ old('username', '')}}" />
+      {{ elIf('<span class="error">El campo usuario está vacío.</span>', getErrorFor('username'), hasErrorFor('username')) }}
+    </div>
+  </div>
+  <div id="mensajes">
+    @if(mensajes.length)
+      <ul class="mensajes">
+        @each(mensaje in mensajes)
+          <li>
+            <p><strong>{{mensaje.username}}</strong> <span>{{mensaje.fecha}}</span></p>
+            <p class="txt">{{mensaje.texto}}</p>
+          </li>
+          @endeach
+        </ul>
+      @else
+        <div class="nomensajes">
+          No hay mensajes
+        </div>
+      @endif
+  </div>
+  <div class="form-row">
+    <div class="col-7">
+      <input type="text" name="texto" id="texto" class="form-control" placeholder="Ingresa un texto..." value="{{ old('texto', '')}}" />
+      {{ elIf('<span class="error">El campo texto está vacío.</span>', getErrorFor('texto'), hasErrorFor('texto')) }}
+    </div>
+    <div class="col-2">
+      <button type="submit" class="btn btn-primary col-12">Enviar</button>
+    </div>
+  </div>
+</form>
+
+@endsection
